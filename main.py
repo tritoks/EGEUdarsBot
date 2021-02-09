@@ -113,6 +113,5 @@ while True:
         bot.polling()
     except Exception as e:
         print(e)
-        raise KeyboardInterrupt
         bot.stop_polling()
         time.sleep(5)
