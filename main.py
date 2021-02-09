@@ -1,6 +1,7 @@
 import json
 import time
 from random import randrange
+from loguru import logger
 
 import telebot
 from telebot import types
@@ -9,6 +10,21 @@ import config
 
 bot = telebot.TeleBot(config.token)
 
+if config.loggingDebug:
+    logger.add(
+            config.loggingDebug, 
+            level="DEBUG", 
+            rotation="10 MB",
+            compression='zip'
+        )
+
+if config.loggingWarning:
+    logger.add(
+            config.loggingWarning, 
+            level="WARNING", 
+            rotation="10 MB",
+            compression='zip'
+        )
 
 def keyToSortWords(word):
     try:
@@ -60,7 +76,7 @@ def sendWord(message):
         words = dataBase[str(user)]
     except KeyError:
         words = [{'right': 0, 'all': 0, 'index': i} for i in range(numOfWords)]
-
+        logger.info(f'Новый пользователь - {user}')
     words.sort(key=keyToSortWords)
 
     markup = types.ReplyKeyboardMarkup()
@@ -73,7 +89,7 @@ def sendWord(message):
         reply_markup=markup
     )
     bot.register_next_step_handler(message, checkAnswer)
-
+    logger.info(f'Отправлено слово пользователю {user}')
     whichWordChoosen[message.chat.id] = words[0]
     words[0]['all'] += 1
     dataBase[str(user)] = words
@@ -84,7 +100,7 @@ def checkAnswer(message):
     text = message.text
     user = message.chat.id
     wordChoosen = whichWordChoosen[message.chat.id]
-
+    logger.info(f'Принят ответ пользователя {user}')
     if text == udars[wordChoosen['index']]['correct']:
         bot.send_message(
             message.chat.id,
@@ -94,7 +110,7 @@ def checkAnswer(message):
         for word in dataBase[str(user)]:
             if word['index'] == wordChoosen['index']:
                 word['right'] += 1
-                print(word)
+                # print(word)
                 break
 
         writeDB(dataBase)
@@ -112,6 +128,6 @@ while True:
     try:
         bot.polling()
     except Exception as e:
-        print(e)
+        logger.warning(f'Произошла ошибка - {e}')
         bot.stop_polling()
         time.sleep(5)
