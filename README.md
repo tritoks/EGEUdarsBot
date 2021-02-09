@@ -6,6 +6,7 @@
 1. В переменной token указать token бота ТГ
 1. Установить Python3
 1. Установить telebot (`pip install pyTelegramBotAPI`)
+1. Установить loguru (`pip install loguru`)
 1. Запустить main.py
 1. УСПЕХ!
 
