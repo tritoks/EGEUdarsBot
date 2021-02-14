@@ -8,7 +8,7 @@ from telebot import types
 
 import config
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot(config.token, threaded=False)
 
 if config.loggingDebug:
     logger.add(
