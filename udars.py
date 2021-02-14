@@ -8,6 +8,7 @@ ans = []
 
 for x in s.splitlines():
 	toAns = {'correct':x, 'all':[]}
+	x = x.replace('Ё', 'Е')
 	cntCorrectUdars = 0
 	for i, s in enumerate(x.lower()):
 		if s in vowels:
